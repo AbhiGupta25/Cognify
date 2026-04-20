@@ -4,6 +4,17 @@ Cognify is a behavioral intelligence platform built with Spring Boot, React, and
 
 It goes beyond static personality typing by analyzing behavioral patterns, contradictions, confidence, and changes across multiple assessment attempts.
 
+## Screenshots
+
+### Signup & Login
+![Signup](./assets/signup.png)
+
+### Assessment Interface
+![Assessment](./assets/assessment.png)
+
+### Results / Analysis
+![Results](./assets/results.png)
+
 ## Features
 
 - Behavioral assessment engine
