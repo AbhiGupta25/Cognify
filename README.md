@@ -1,8 +1,12 @@
-# Cognify
+# Cognify 🧠
 
-Cognify is a behavioral intelligence platform built with Spring Boot, React, and MySQL.
+A behavioral personality intelligence platform that analyzes user responses across multiple attempts to detect patterns, contradictions, and evolving traits over time.
 
-It goes beyond static personality typing by analyzing behavioral patterns, contradictions, confidence, and changes across multiple assessment attempts.
+## 🚀 Tech Stack
+- Java (Spring Boot)
+- React
+- MySQL
+- REST APIs
 
 ## Product Preview
 
