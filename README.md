@@ -4,16 +4,31 @@ Cognify is a behavioral intelligence platform built with Spring Boot, React, and
 
 It goes beyond static personality typing by analyzing behavioral patterns, contradictions, confidence, and changes across multiple assessment attempts.
 
-## Screenshots
+## Product Preview
 
-### Signup & Login
+### 1. Signup & Access
+Users can create an account and access a personalized behavioral intelligence workflow.
 ![Signup](./assets/signup.png)
 
-### Assessment Interface
-![Assessment](./assets/assessment.png)
+### 2. Dashboard
+The dashboard surfaces the latest profile, archetype, confidence, and attempt-linked navigation.
+![Dashboard](./assets/home_page.png)
 
-### Results / Analysis
-![Results](./assets/results.png)
+### 3. Behavioral Assessment
+Users respond to a structured 1–5 scale assessment designed to capture trait signals, contradictions, and response consistency.
+![Assessment](./assets/assessment_page.png)
+
+### 4. Results Report
+The system generates a narrative personality report with MBTI alignment, archetype mapping, and structured interpretation.
+![Results](./assets/results_page.png)
+
+### 5. Trait Score Map
+Cognify visualizes behavioral dimensions such as decision style, stress resilience, adaptability, and social energy.
+![Trait Scores](./assets/trait_scores.png)
+
+### 6. Retest Comparison
+Users can compare two attempts to understand what remained stable and what evolved across time.
+![Comparison](./assets/comparison_page.png)
 
 ## Features
 
