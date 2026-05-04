@@ -1,6 +1,7 @@
 import React from "react";
 
-function ResultPage({ result, onRestart, onBackToDashboard, onOpenSimulation }) {
+function ResultPage({ user, result, onRestart, onBackToDashboard, onOpenSimulation }) {
+  const isDemoProfile = user?.email === "judge.demo@cognify.app";
   const sections = [
     { title: "Core Profile", text: result.coreProfile },
     { title: "Decision Pattern", text: result.decisionPattern },
@@ -17,6 +18,7 @@ function ResultPage({ result, onRestart, onBackToDashboard, onOpenSimulation }) 
       <section className="hero-card report-hero">
         <div>
           <div className="eyebrow">Behavioral Intelligence Report</div>
+          {isDemoProfile && <div className="demo-profile-badge">Demo Profile</div>}
           <h2>{result.mbtiType}</h2>
           <p className="hero-subtitle">{result.expandedMbtiType}</p>
         </div>

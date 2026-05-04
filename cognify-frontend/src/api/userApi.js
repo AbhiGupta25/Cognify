@@ -18,3 +18,8 @@ export const fetchUserAttempts = async (userId) => {
   const res = await api.get(`/${userId}/attempts`);
   return res.data;
 };
+
+export const startDemo = async () => {
+  const res = await axios.post("http://localhost:8080/api/demo/start");
+  return res.data;
+};
