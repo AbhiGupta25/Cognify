@@ -118,254 +118,353 @@ public class SimulationService {
     }
 
     private String buildScenarioTitle(SimulationContext context) {
-        if (!context.scenarioText().isBlank()) {
-            return switch (context.category()) {
-                case "Custom Scenario" -> "Custom Simulation: " + trimSentence(context.scenarioText(), 58);
-                default -> context.category() + ": " + trimSentence(context.scenarioText(), 52);
-            };
-        }
-
-        return switch (context.category()) {
-            case "Group Project Conflict" -> "Simulation: Team Friction Under Deadline";
-            case "Viva / Interview Pressure" -> "Simulation: High-Pressure Evaluation";
-            case "Career Confusion" -> "Simulation: Fork-in-the-Road Career Decision";
-            case "Procrastination" -> "Simulation: Motivation Drift Before a Key Deadline";
-            case "Friendship Conflict" -> "Simulation: Emotional Misalignment With a Close Friend";
-            case "Leadership Situation" -> "Simulation: Leading Without Losing Yourself";
-            default -> "Simulation: Personalized Real-Life Scenario";
-        };
+        return context.category();
     }
 
     private String buildPersonalitySnapshot(SimulationContext context) {
         String mbti = fallback(context.attempt().getMbtiType(), "Unknown");
         String archetype = fallback(context.attempt().getArchetype(), "Balanced Integrator");
-        String confidence = context.attempt().getConfidenceScore() != null
-                ? context.attempt().getConfidenceScore() + "/100"
-                : "Unavailable";
 
-        return "This simulation is anchored in your saved " + mbti + " profile and the Cognify archetype "
-                + archetype + ". Your current signal suggests " + socialDescriptor(context) + ", "
-                + decisionDescriptor(context) + ", and " + stressDescriptor(context) + ". Confidence in this profile sits at "
-                + confidence + ", so the likely pattern here is not random mood alone but a repeatable behavioral style. "
-                + fallback(context.attempt().getCoreProfile(), "Your report emphasizes a blended but identifiable internal pattern.");
+        return "Profile Anchor: " + mbti + " · " + archetype + "\n"
+                + "Primary pattern: " + primaryPattern(context) + "\n"
+                + "Pressure tendency: " + pressureTendency(context) + "\n"
+                + "Useful strength: " + usefulStrength(context) + "\n"
+                + "Risk to watch: " + riskToWatch(context);
     }
 
     private String buildDefaultReaction(SimulationContext context) {
-        String categoryLead = switch (context.category()) {
-            case "Group Project Conflict" -> "In a tense group setting, you are likely to scan for who is being unreasonable, what is inefficient, and where the atmosphere is starting to destabilize.";
-            case "Viva / Interview Pressure" -> "Under direct evaluation, your first reaction is likely to be a fast internal check for whether you sound coherent, competent, and in control.";
-            case "Career Confusion" -> "When too many future paths stay open, your mind is likely to cycle between possibility, pressure, and the need for a signal that feels trustworthy.";
-            case "Procrastination" -> "When momentum slips, your default pattern is likely to start with internal negotiation rather than immediate action.";
-            case "Friendship Conflict" -> "In personal conflict, you are likely to track both the emotional meaning of what happened and the long-term implication for trust.";
-            case "Leadership Situation" -> "When you are suddenly placed in charge, your first instinct is likely to be organizing the emotional and structural field at the same time.";
-            default -> "In an ambiguous real-life scenario, your likely first move is to read the room, locate the pressure point, and respond in the style your assessment most strongly predicts.";
+        return switch (context.category()) {
+            case "Group Project Conflict" -> "If contribution is uneven and the deadline is getting close, you are likely to start protecting the grade before you start protecting the vibe. You will quickly notice who is not carrying weight, who is creating avoidable drama, and where ownership is too fuzzy for work to stay safe. If you are more internal, you may rehearse the message first. If you are more external, you may step in quickly and try to reset the group live.";
+            case "Viva / Interview Pressure" -> "When a panel pushes with follow-up questions, your first reaction is likely to be an internal competence check: do I sound clear, do I remember the simple things, do I still seem like I understand my own project logic? If stress spikes, you may briefly freeze or sound flatter than you feel. The recovery move is usually to rebuild the answer from the core idea instead of trying to sound impressive immediately.";
+            case "Career Confusion" -> "When too many paths stay open, your mind is likely to compare them in loops. One part of you wants the right answer before moving. Another part fears choosing wrong and closing doors. That is where decision paralysis starts: not because you do not care, but because every option carries identity weight.";
+            case "Procrastination" -> "When the task matters enough to feel self-defining, your default reaction is likely to be avoidance dressed up as delay logic. You may tell yourself you will start when the mood is cleaner, drift into a dopamine escape, feel guilt at night, and wake up with the task feeling heavier. The real choke point is usually starting friction, not lack of awareness.";
+            case "Friendship Conflict" -> "If replies slow down or the tone suddenly feels off, your mind is likely to start decoding emotional ambiguity before you have enough direct data. You may wonder whether access is shrinking, whether the friendship is cooling, and whether one wrong message could make things worse. Depending on your profile, you may either hold back too long or push for clarity too fast.";
+            case "Leadership Situation" -> "When you need to take charge, your first instinct is likely to assess whether the room has enough structure, role clarity, and emotional control to move. You will probably feel decision ownership quickly. If you like structure, you may start assigning roles fast. If you track people deeply, you may also monitor morale while trying not to look controlling.";
+            default -> "In the situation you described, your first move is likely to center on this pressure point: " + customScenarioFocus(context) + ". You will probably respond by trying to regain clarity, stability, or control in the exact place that feels most emotionally loaded.";
         };
-
-        return categoryLead + " " + socialOverlay(context) + " " + structureOverlay(context) + " " + fallback(
-                context.attempt().getBehavioralPattern(),
-                "Your saved report suggests that this reaction will follow your broader consistency pattern rather than appear out of nowhere."
-        );
     }
 
     private String buildHiddenBlindSpot(SimulationContext context) {
-        if (trait(context, "Stress Resilience") < 42 && trait(context, "Behavioral Consistency") < 48) {
-            return "Your blind spot in this scenario is not lack of intelligence but state-dependence. Once stress rises, you may mistake temporary overwhelm for a permanent truth about the situation, then act from urgency instead of signal.";
-        }
-        if (trait(context, "Emotional Sensitivity") > 68 && trait(context, "Decision Style") > 58) {
-            return "Your blind spot is likely over-identifying with tone. You may correctly sense emotional undercurrents but still give them more steering power than the actual objective problem deserves.";
-        }
-        if (trait(context, "Structure Orientation") > 68 && trait(context, "Adaptability") < 45) {
-            return "Your blind spot is rigidity disguised as responsibility. Because structure feels safe and productive, you may double down on control right when flexibility would create the better outcome.";
-        }
-        if (trait(context, "Cognitive Style") > 66 && trait(context, "Behavioral Consistency") < 52) {
-            return "Your blind spot is elegant overthinking. You may generate a sharp interpretation of the problem without moving quickly enough into concrete behavior that changes the outcome.";
-        }
-        if (trait(context, "Social Energy") < 42) {
-            return "Your blind spot is silent withdrawal. You may believe you are buying clarity by stepping back, while other people experience the same move as disengagement or lack of ownership.";
-        }
-        return "Your blind spot here is subtle self-protection: part of you may optimize for preserving identity, harmony, or certainty before fully testing what the situation is actually asking from you.";
+        return switch (context.category()) {
+            case "Group Project Conflict" -> {
+                if (trait(context, "Structure Orientation") > 68) {
+                    yield "Your blind spot is assuming that once ownership is clarified, the problem is solved. In group work, people can agree politely and still fail quietly, so written accountability matters more than verbal reassurance.";
+                }
+                if (trait(context, "Emotional Sensitivity") > 68) {
+                    yield "Your blind spot is over-managing tone. You may try so hard to avoid drama that you become softer than the situation requires, which lets uneven contribution continue.";
+                }
+                yield "Your blind spot is waiting too long for the team to self-correct. Deadline pressure punishes vague optimism.";
+            }
+            case "Viva / Interview Pressure" -> {
+                if (trait(context, "Stress Resilience") < 42) {
+                    yield "Your blind spot is reading a temporary freeze as proof that you do not know your material. In reality, the drop is often retrieval pressure, not understanding failure.";
+                }
+                yield "Your blind spot is trying to sound perfect instead of sounding clear. That is what makes answers feel memorized or less natural than they need to.";
+            }
+            case "Career Confusion" -> {
+                if (trait(context, "Cognitive Style") > 65) {
+                    yield "Your blind spot is turning career choice into a philosophy problem. You may compare paths so deeply that no option feels concrete enough to test.";
+                }
+                yield "Your blind spot is believing the right decision must appear before movement begins. That belief quietly feeds paralysis.";
+            }
+            case "Procrastination" -> {
+                if (trait(context, "Behavioral Consistency") < 48) {
+                    yield "Your blind spot is expecting motivation to arrive before action. That keeps the avoidance loop emotionally convincing even when you already know the first step.";
+                }
+                yield "Your blind spot is underestimating how much starting friction, not task difficulty, is driving the delay.";
+            }
+            case "Friendship Conflict" -> {
+                if (trait(context, "Emotional Sensitivity") > 68) {
+                    yield "Your blind spot is treating tone as decisive evidence before you have enough direct communication. Delayed replies and emotional ambiguity can make your mind fill in the blanks too aggressively.";
+                }
+                yield "Your blind spot is choosing either silence or intensity when what usually works better is direct but low-pressure communication.";
+            }
+            case "Leadership Situation" -> {
+                if (trait(context, "Adaptability") < 45) {
+                    yield "Your blind spot is mistaking control for leadership. If roles are clear but people feel over-managed, execution may still drop.";
+                }
+                yield "Your blind spot is carrying too much decision ownership alone instead of delegating clearly enough for the team to grow around you.";
+            }
+            default -> "Your blind spot is likely hidden inside the exact pressure you described: " + customScenarioBlindSpot(context);
+        };
     }
 
     private String buildOptimization(SimulationContext context) {
-        List<String> priorities = new ArrayList<>();
-
-        if (trait(context, "Stress Resilience") < 45) {
-            priorities.add("reducing internal overload");
-        } else {
-            priorities.add("maintaining control under pressure");
-        }
-
-        if (trait(context, "Emotional Sensitivity") >= 60) {
-            priorities.add("protecting relational tone");
-        } else {
-            priorities.add("keeping the situation logically clean");
-        }
-
-        if (trait(context, "Structure Orientation") >= 60) {
-            priorities.add("creating a clear sequence");
-        } else if (trait(context, "Adaptability") >= 60) {
-            priorities.add("keeping room to pivot");
-        } else {
-            priorities.add("avoiding premature lock-in");
-        }
-
-        return "In this simulation, your brain is primarily optimizing for " + String.join(", ", priorities)
-                + ". That is why your first impulse may feel emotionally correct even before it has been fully pressure-tested against the external reality of the situation. "
-                + fallback(context.attempt().getDecisionPattern(), "Your saved decision profile suggests you will balance meaning and logic in a recognizable way.");
+        return switch (context.category()) {
+            case "Group Project Conflict" -> "Your brain is optimizing for protecting output quality without letting the group become dramatic or chaotic. That is why you may care so much about the grade, role clarity, and whether there is a written trail of accountability.";
+            case "Viva / Interview Pressure" -> "Your brain is optimizing for staying credible under scrutiny. It wants to recover quickly, explain project logic clearly, and avoid sounding either blank or rehearsed.";
+            case "Career Confusion" -> "Your brain is optimizing for not choosing wrong too early. It is trying to preserve future optionality, reduce regret, and find a path that feels both meaningful and livable.";
+            case "Procrastination" -> "Your brain is optimizing for short-term relief from friction. That is why dopamine escape can feel easier than starting, even when guilt keeps building in the background.";
+            case "Friendship Conflict" -> "Your brain is optimizing for preserving the relationship without misstepping. It wants clarity, but it also wants to avoid saying something that could reduce emotional access further.";
+            case "Leadership Situation" -> "Your brain is optimizing for stable execution under your name. It wants role clarity, emotional control, and enough decision ownership that the situation does not drift.";
+            default -> "Your brain is optimizing for relief from the exact pressure inside your scenario: " + customScenarioFocus(context) + ". That is why your first impulse may feel urgent before it is fully tested.";
+        };
     }
 
     private String buildBetterStrategy(SimulationContext context) {
         String categoryAnchor = switch (context.category()) {
-            case "Group Project Conflict" -> "Treat the conflict as a coordination problem first and a personality problem second.";
-            case "Viva / Interview Pressure" -> "Slow the interaction down by giving your mind a structure it can trust: point, evidence, example, close.";
-            case "Career Confusion" -> "Replace abstract life pressure with bounded experiments that create signal.";
-            case "Procrastination" -> "Stop negotiating with the whole mountain and build one low-friction starting lane.";
-            case "Friendship Conflict" -> "Lead with clean honesty instead of mental replay. Clarify impact without dramatizing motive.";
-            case "Leadership Situation" -> "Anchor the room with a few clear decisions, then invite input so leadership feels steady rather than controlling.";
-            default -> "Convert the scenario from a vague emotional field into a sequence you can observe, name, and influence.";
+            case "Group Project Conflict" -> "Treat the problem as an execution issue. Move the group from vague frustration to explicit ownership, dates, and written follow-up.";
+            case "Viva / Interview Pressure" -> "Answer for clarity, not performance. When a question scrambles you, slow down, restate the logic, and rebuild the answer from first principles.";
+            case "Career Confusion" -> "Stop asking your brain for one perfect choice. Compare fewer paths and turn them into small experiments that produce real signal.";
+            case "Procrastination" -> "Shrink the target until starting feels almost too small to resist. Your job is to break the avoidance loop, not finish the whole mountain emotionally.";
+            case "Friendship Conflict" -> "Use direct but low-pressure communication. Say what changed, what you noticed, and what you want to understand without flooding the moment.";
+            case "Leadership Situation" -> "Lead with role clarity and calm pacing. Delegate visibly, own the decisions that are yours, and avoid confusing intensity with leadership.";
+            default -> "Translate your scenario into one clear decision, one visible conversation, and one immediate next step.";
         };
 
-        return categoryAnchor + " " + stressSupport(context) + " " + adaptabilitySupport(context)
-                + " The best version of your profile in this moment is not a different personality. It is your same personality with more sequencing, less fusion, and faster reality-checking.";
+        return categoryAnchor + " " + stressSupport(context) + " " + adaptabilitySupport(context);
     }
 
     private List<String> buildThreeStepPlan(SimulationContext context) {
         List<String> steps = new ArrayList<>();
         switch (context.category()) {
             case "Group Project Conflict" -> {
-                steps.add("Name the real issue in one sentence: missed ownership, unclear expectations, uneven effort, or tone damage.");
-                steps.add("Call for a short reset conversation with roles, deadlines, and one concrete accountability checkpoint.");
-                steps.add("After the conversation, send a clean written summary so the group remembers structure instead of just emotion.");
+                steps.add("Name the issue clearly to yourself: uneven contribution, missed ownership, unclear deadline pressure, or people avoiding the hard conversation.");
+                steps.add("Run a short reset with task ownership, explicit deadlines, and no vague promises about helping more later.");
+                steps.add("Send written accountability right after the conversation so grade protection does not depend on memory or tone.");
             }
             case "Viva / Interview Pressure" -> {
-                steps.add("Before entering, choose three anchor stories or examples that prove competence under pressure.");
-                steps.add("During difficult questions, pause for one beat and answer in a simple structure instead of chasing perfection.");
-                steps.add("Afterward, record where your mind tightened so you can rehearse the pressure points rather than vaguely worrying about them.");
+                steps.add("Choose three anchor explanations that prove you understand the project logic, not just the final output.");
+                steps.add("If you freeze or forget something simple, pause, recover, and restart from the core idea instead of panicking about the stumble.");
+                steps.add("Practice sounding clear rather than memorized by answering one difficult question in your own words after the session.");
             }
             case "Career Confusion" -> {
-                steps.add("Reduce the decision to two or three live options instead of carrying every possible future at once.");
-                steps.add("Score each option against energy, values, lifestyle fit, and practical traction using your current profile rather than social comparison.");
-                steps.add("Run one small test this week such as a conversation, portfolio draft, or short project to replace fog with evidence.");
+                steps.add("Cut the options down to two or three live paths so your brain is not carrying every possible future at once.");
+                steps.add("Compare each path against energy, practical fit, and the kind of daily life it creates, not just prestige or fear.");
+                steps.add("Run one small experiment this week so decision paralysis gets replaced with real evidence.");
             }
             case "Procrastination" -> {
-                steps.add("Define the smallest visible starting action you can do in under fifteen minutes.");
-                steps.add("Remove one source of friction from the environment before you begin.");
-                steps.add("Finish the first block before evaluating your mood, because momentum is the real target.");
+                steps.add("Define the tiniest first action that breaks starting friction in under ten minutes.");
+                steps.add("Remove the easiest dopamine escape before you begin so avoidance has fewer hiding places.");
+                steps.add("Work long enough to break the guilt loop before asking whether you feel motivated.");
             }
             case "Friendship Conflict" -> {
-                steps.add("Clarify what actually hurt you: exclusion, inconsistency, disrespect, or misunderstanding.");
-                steps.add("Start the conversation with observation and impact, not accusation.");
-                steps.add("Ask for one future-facing repair behavior so the friendship has a practical next step.");
+                steps.add("Decide what is actually hurting: delayed replies, emotional ambiguity, a tone shift, or fear of losing access.");
+                steps.add("Send a direct but low-pressure message that names what changed without cornering the other person.");
+                steps.add("Ask for clarity about the friendship instead of trying to decode everything from tone alone.");
             }
             case "Leadership Situation" -> {
-                steps.add("Stabilize the room by stating the mission, the time horizon, and the immediate next priority.");
-                steps.add("Assign ownership based on strengths instead of trying to carry everything yourself.");
-                steps.add("Close the loop with a brief check-in rhythm so leadership becomes a system, not a burst of effort.");
+                steps.add("State the mission, time horizon, and next decision so the room feels led quickly.");
+                steps.add("Delegate by role clarity, not by hope. Everyone should know what they own and what they are accountable for.");
+                steps.add("Hold emotional control while still owning the hard decisions that come with taking charge.");
             }
             default -> {
-                steps.add("Write the scenario as facts first so your mind is working with reality instead of raw intensity.");
-                steps.add("Decide what outcome matters most in the next seventy-two hours.");
-                steps.add("Take one visible action that moves the situation forward before asking yourself to feel fully ready.");
+                steps.add("Write your scenario in one factual sentence using your own words: " + trimSentence(context.scenarioText(), 110));
+                steps.add("Pick the one outcome that matters most in the next few days so the situation stops feeling shapeless.");
+                steps.add("Take one direct visible action that responds to the exact pressure point you described.");
             }
         }
         return steps;
     }
 
     private List<String> buildSevenDayPlan(SimulationContext context) {
-        List<String> plan = new ArrayList<>();
-        plan.add("Day 1: Re-read your summary and core profile, then write one sentence about how this scenario triggers your usual pattern.");
-        plan.add("Day 2: Track one moment where you felt reactive and label what you were trying to protect: control, harmony, certainty, image, or energy.");
-        plan.add("Day 3: Practice one low-stakes version of the better response strategy in a smaller conversation or task.");
-        plan.add("Day 4: Build a structure that supports your weakest pressure trait, such as accountability, recovery time, or decision framing.");
-        plan.add("Day 5: Use one direct action that interrupts your default loop and creates external evidence.");
-        plan.add("Day 6: Review whether the scenario changed more because of your thoughts, your environment, or your communication.");
-        plan.add("Day 7: Capture one new rule for yourself that you want future-you to remember in similar situations.");
-        return plan;
+        return switch (context.category()) {
+            case "Group Project Conflict" -> buildGroupProjectWeek();
+            case "Viva / Interview Pressure" -> buildInterviewWeek();
+            case "Career Confusion" -> buildCareerWeek();
+            case "Procrastination" -> buildProcrastinationWeek();
+            case "Friendship Conflict" -> buildFriendshipWeek();
+            case "Leadership Situation" -> buildLeadershipWeek();
+            default -> buildCustomWeek(context);
+        };
     }
 
     private String buildReflectionPrompt(SimulationContext context) {
-        return "When this kind of situation appears, what part of you reacts first: the part protecting identity, the part protecting stability, or the part trying to prove competence, and how would the wiser version of your "
-                + fallback(context.attempt().getArchetype(), "Cognify profile")
-                + " respond one beat later?";
+        return switch (context.category()) {
+            case "Group Project Conflict" -> "When teamwork gets uneven, do you protect the relationship first, the grade first, or your own peace first, and what would a calmer version of you do to create accountability sooner?";
+            case "Viva / Interview Pressure" -> "When you start freezing under questions, what exactly are you afraid the panel will conclude about you, and how can you return to explaining the logic instead of performing confidence?";
+            case "Career Confusion" -> "Are you stuck because the options are truly equal, or because choosing one path means grieving the others?";
+            case "Procrastination" -> "What are you actually avoiding at the moment of delay: effort, uncertainty, imperfection, or the feeling of being measured by the result?";
+            case "Friendship Conflict" -> "In friendship tension, what do you usually fear more: sounding needy, sounding confrontational, or hearing an answer you may not like?";
+            case "Leadership Situation" -> "When you take charge, what is harder for you: delegating trust, holding emotional steadiness, or accepting that your name will sit on the decision?";
+            default -> "In the exact scenario you described, what are you trying hardest to protect, and what one clearer action would respect that need without letting it run the whole situation?";
+        };
     }
 
-    private String socialDescriptor(SimulationContext context) {
+    private String primaryPattern(SimulationContext context) {
         int social = trait(context, "Social Energy");
-        if (social >= 65) {
-            return "you tend to process pressure externally and gain momentum through visible engagement";
-        }
-        if (social <= 40) {
-            return "you tend to process pressure inwardly and protect clarity through selective space";
-        }
-        return "you tend to stay balanced between outward engagement and inward recalibration";
-    }
-
-    private String decisionDescriptor(SimulationContext context) {
+        int structure = trait(context, "Structure Orientation");
         int decision = trait(context, "Decision Style");
-        if (decision >= 60) {
-            return "your decisions naturally stay sensitive to human impact";
+
+        if (social <= 40 && structure >= 60) {
+            return "You usually process first, then act once you have a cleaner internal map.";
         }
-        if (decision <= 40) {
-            return "your decisions naturally tighten around logic and clean structure";
+        if (social >= 60 && decision >= 55) {
+            return "You tend to move toward people quickly while tracking both outcome and human impact.";
         }
-        return "your decisions usually blend emotional intelligence with practical reasoning";
+        if (structure >= 65) {
+            return "You work best when ambiguity gets converted into sequence, ownership, and motion.";
+        }
+        return "You tend to balance reading the situation with finding the next practical move.";
     }
 
-    private String stressDescriptor(SimulationContext context) {
+    private String pressureTendency(SimulationContext context) {
         int stress = trait(context, "Stress Resilience");
-        if (stress >= 65) {
-            return "you usually keep form even when the situation heats up";
+        int cognition = trait(context, "Cognitive Style");
+
+        if (stress <= 40 && cognition >= 60) {
+            return "Under pressure, your mind can get fast, sharp, and crowded at the same time.";
         }
         if (stress <= 40) {
-            return "pressure can narrow your range faster than people around you may realize";
+            return "Under pressure, you may narrow quickly and react from overload before clarity.";
         }
-        return "your stress response is workable but still sensitive to overload";
+        if (stress >= 65) {
+            return "Under pressure, you usually stay composed enough to keep thinking while others destabilize.";
+        }
+        return "Under pressure, you stay workable, but too much ambiguity can still slow your best judgment.";
     }
 
-    private String socialOverlay(SimulationContext context) {
-        int social = trait(context, "Social Energy");
-        if (social >= 65) {
-            return "You may speak early, test ideas in real time, and try to shift the energy by engaging it directly.";
+    private String usefulStrength(SimulationContext context) {
+        if (trait(context, "Adaptability") >= 65) {
+            return "You can pivot faster than most once the real problem becomes visible.";
         }
-        if (social <= 40) {
-            return "You may initially pull back, process privately, and want a few internal minutes before saying what you really think.";
+        if (trait(context, "Structure Orientation") >= 65) {
+            return "You can create order and role clarity when a situation starts drifting.";
         }
-        return "You are likely to stay selective, engaging when it feels useful rather than reacting just to fill the air.";
+        if (trait(context, "Emotional Sensitivity") >= 65) {
+            return "You notice emotional tone early, which helps you catch problems before they become obvious.";
+        }
+        if (trait(context, "Stress Resilience") >= 65) {
+            return "You can keep functioning when the room gets tense or evaluative.";
+        }
+        return "You usually retain enough self-awareness to notice your own pattern while it is happening.";
     }
 
-    private String structureOverlay(SimulationContext context) {
-        int structure = trait(context, "Structure Orientation");
-        int adaptability = trait(context, "Adaptability");
-        if (structure >= 65) {
-            return "Because structure calms your system, you will probably start building order, priorities, or a decision frame almost immediately.";
+    private String riskToWatch(SimulationContext context) {
+        if (trait(context, "Behavioral Consistency") <= 45) {
+            return "Execution can become too dependent on your current state instead of the real priority.";
         }
-        if (adaptability >= 65) {
-            return "Because flexibility is one of your strengths, you may improvise effectively, though the risk is leaving key expectations too implicit.";
+        if (trait(context, "Emotional Sensitivity") >= 68) {
+            return "You may let tone carry more meaning than the evidence fully supports.";
         }
-        return "You are likely to search for a usable middle path, enough order to move forward without locking yourself too early into one angle.";
+        if (trait(context, "Structure Orientation") >= 68 && trait(context, "Adaptability") <= 45) {
+            return "You may tighten control when the moment actually needs more flexibility.";
+        }
+        return "You may protect certainty, harmony, or self-image before fully testing the real demand of the moment.";
     }
 
     private String stressSupport(SimulationContext context) {
         int stress = trait(context, "Stress Resilience");
         if (stress <= 40) {
-            return "The key adjustment is reducing nervous-system noise before trying to make a brilliant decision.";
+            return "Your first win is regulation, because once your system calms down your thinking becomes more trustworthy.";
         }
         if (stress >= 65) {
-            return "Your resilience lets you stay functional, but do not let that strength trick you into carrying everything silently.";
+            return "You can stay functional under pressure, but do not let that strength turn into silent over-carrying.";
         }
-        return "A small regulation move before action will probably improve the quality of the response more than more thinking alone.";
+        return "A small reset before action will probably improve the outcome more than another round of overthinking.";
     }
 
     private String adaptabilitySupport(SimulationContext context) {
         int adaptability = trait(context, "Adaptability");
         int consistency = trait(context, "Behavioral Consistency");
         if (adaptability <= 40) {
-            return "Leave yourself one planned pivot so the strategy does not collapse if reality changes.";
+            return "Give yourself one planned pivot so the strategy does not collapse the moment reality changes.";
         }
         if (consistency <= 45) {
-            return "Keep the strategy behaviorally small and visible so execution does not depend on a perfect emotional state.";
+            return "Keep the next move small and visible so execution does not depend on the perfect mood.";
         }
-        return "Aim for a response that is concrete enough to execute and flexible enough to survive real-world friction.";
+        return "Aim for a response that is specific enough to execute and flexible enough to survive real-world friction.";
+    }
+
+    private List<String> buildGroupProjectWeek() {
+        List<String> plan = new ArrayList<>();
+        plan.add("Day 1: List the project tasks, current owners, and where contribution is uneven.");
+        plan.add("Day 2: Send one clean accountability message with deadlines and explicit ownership.");
+        plan.add("Day 3: Track whether teammates changed behavior or only sounded cooperative.");
+        plan.add("Day 4: Tighten the plan around the riskiest unfinished deliverable.");
+        plan.add("Day 5: Document progress in writing so grade protection is not based on memory.");
+        plan.add("Day 6: Practice one firmer sentence that avoids drama but does not avoid responsibility.");
+        plan.add("Day 7: Review what kind of teammate behavior triggers you fastest and how you want to handle it next time.");
+        return plan;
+    }
+
+    private List<String> buildInterviewWeek() {
+        List<String> plan = new ArrayList<>();
+        plan.add("Day 1: Write your project logic in plain language as if explaining it to a smart stranger.");
+        plan.add("Day 2: Rehearse three answers without memorizing exact wording.");
+        plan.add("Day 3: Practice recovering after a freeze by pausing and restarting from the core idea.");
+        plan.add("Day 4: Answer one intentionally difficult follow-up question out loud.");
+        plan.add("Day 5: Record yourself once and remove phrases that make you sound memorized.");
+        plan.add("Day 6: Rehearse with mild pressure so forgetting simple things stops feeling catastrophic.");
+        plan.add("Day 7: Write the exact recovery line you want to use when a question catches you off guard.");
+        return plan;
+    }
+
+    private List<String> buildCareerWeek() {
+        List<String> plan = new ArrayList<>();
+        plan.add("Day 1: Reduce your options to two or three serious paths.");
+        plan.add("Day 2: Write what each path gives you and what each path costs you.");
+        plan.add("Day 3: Notice whether fear of choosing wrong is louder than genuine attraction to any option.");
+        plan.add("Day 4: Run one small experiment such as an informational call, project sample, or portfolio step.");
+        plan.add("Day 5: Compare the paths again using real signal, not just imagination.");
+        plan.add("Day 6: Remove one option if it is only alive because of guilt or comparison.");
+        plan.add("Day 7: Decide the next one-month direction instead of demanding a permanent life answer.");
+        return plan;
+    }
+
+    private List<String> buildProcrastinationWeek() {
+        List<String> plan = new ArrayList<>();
+        plan.add("Day 1: Identify the first point of friction where avoidance usually starts.");
+        plan.add("Day 2: Make the first action tiny enough that starting feels boring, not dramatic.");
+        plan.add("Day 3: Notice your favorite dopamine escape and block it for one work sprint.");
+        plan.add("Day 4: Start before you feel ready and measure what happens to the guilt loop.");
+        plan.add("Day 5: Repeat the same start ritual so action depends less on mood.");
+        plan.add("Day 6: Track whether the task was hard or whether beginning was the real problem.");
+        plan.add("Day 7: Build one personal rule for future deadlines that protects momentum earlier.");
+        return plan;
+    }
+
+    private List<String> buildFriendshipWeek() {
+        List<String> plan = new ArrayList<>();
+        plan.add("Day 1: Name what changed without interpreting motive yet.");
+        plan.add("Day 2: Separate delayed replies and tone shifts from the story your mind is building around them.");
+        plan.add("Day 3: Draft a direct but low-pressure message.");
+        plan.add("Day 4: Send it instead of continuing silent overthinking.");
+        plan.add("Day 5: Notice whether clarity helped more than replaying the ambiguity.");
+        plan.add("Day 6: Decide what kind of friendship access and communication you actually need.");
+        plan.add("Day 7: Reflect on whether your usual move is silence, intensity, or decoding, and what healthier balance looks like.");
+        return plan;
+    }
+
+    private List<String> buildLeadershipWeek() {
+        List<String> plan = new ArrayList<>();
+        plan.add("Day 1: Clarify the mission, deadline, and what success looks like.");
+        plan.add("Day 2: Assign ownership so each person knows their role clearly.");
+        plan.add("Day 3: Notice where you are over-holding decisions that could be delegated.");
+        plan.add("Day 4: Practice one calm leadership message that is firm without sounding harsh.");
+        plan.add("Day 5: Run a short check-in focused on blockers, not blame.");
+        plan.add("Day 6: Review where emotional control helped and where control became over-control.");
+        plan.add("Day 7: Write one leadership rule you want to keep using when responsibility lands on you.");
+        return plan;
+    }
+
+    private List<String> buildCustomWeek(SimulationContext context) {
+        List<String> plan = new ArrayList<>();
+        plan.add("Day 1: Rewrite your scenario in factual language: " + trimSentence(context.scenarioText(), 95));
+        plan.add("Day 2: Identify the exact pressure point you keep circling mentally.");
+        plan.add("Day 3: Turn that pressure point into one direct conversation, decision, or action.");
+        plan.add("Day 4: Watch how your default pattern shows up once you begin acting.");
+        plan.add("Day 5: Adjust the plan based on evidence, not just internal intensity.");
+        plan.add("Day 6: Repeat one behavior that made the situation clearer.");
+        plan.add("Day 7: Capture the lesson you want to carry into the next version of this same pattern.");
+        return plan;
+    }
+
+    private String customScenarioFocus(SimulationContext context) {
+        if (context.scenarioText().isBlank()) {
+            return "the need to reduce uncertainty and regain traction";
+        }
+        return trimSentence(context.scenarioText(), 120);
+    }
+
+    private String customScenarioBlindSpot(SimulationContext context) {
+        if (trait(context, "Cognitive Style") > 65) {
+            return "you may analyze the wording and meaning of the situation more deeply than you act on it.";
+        }
+        if (trait(context, "Stress Resilience") < 42) {
+            return "once the pressure rises, the situation may feel larger and more final than it really is.";
+        }
+        return "you may wait for perfect clarity before taking the first useful action.";
     }
 
     private int trait(SimulationContext context, String name) {
@@ -377,6 +476,9 @@ public class SimulationService {
     }
 
     private String trimSentence(String text, int maxLength) {
+        if (text == null || text.isBlank()) {
+            return "";
+        }
         if (text.length() <= maxLength) {
             return text;
         }
