@@ -15,6 +15,7 @@ function SimulationPage({ user, result, onBackToResult, onBackToDashboard }) {
   const [scenarioCategory, setScenarioCategory] = useState("Group Project Conflict");
   const [scenarioText, setScenarioText] = useState("");
   const [simulation, setSimulation] = useState(null);
+  const [submittedScenario, setSubmittedScenario] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -59,6 +60,10 @@ function SimulationPage({ user, result, onBackToResult, onBackToDashboard }) {
         scenarioText: scenarioText.trim(),
       });
       setSimulation(data);
+      setSubmittedScenario({
+        category: scenarioCategory,
+        text: scenarioText.trim(),
+      });
     } catch (err) {
       const message =
         err?.response?.data?.message ||
@@ -74,6 +79,7 @@ function SimulationPage({ user, result, onBackToResult, onBackToDashboard }) {
       <section className="hero-card simulation-hero">
         <div>
           <div className="eyebrow">Cognitive Simulation Mode</div>
+          <div className="simulation-powered-badge">Powered by your latest Cognify assessment</div>
           <h2>Run your personality through a real-life pressure test.</h2>
           <p>
             Cognify uses your saved assessment attempt, MBTI alignment, archetype, trait scores, and behavioral report
@@ -149,9 +155,12 @@ function SimulationPage({ user, result, onBackToResult, onBackToDashboard }) {
           <section className="hero-card simulation-result-hero">
             <div>
               <div className="eyebrow">Simulation Output</div>
-              <h2>{simulation.scenarioTitle}</h2>
-              <p>
-                Deterministic simulation based on your current attempt rather than a generic personality template.
+              <h3 className="simulation-output-title">{submittedScenario?.category || simulation.scenarioTitle}</h3>
+              <p className="simulation-output-supporting">
+                {submittedScenario?.text || defaultScenarioSupport(simulation.scenarioTitle)}
+              </p>
+              <p className="simulation-output-note">
+                Personalized simulation generated from your Cognify profile and current scenario.
               </p>
             </div>
           </section>
@@ -199,7 +208,7 @@ function InsightCard({ title, text, accent = false }) {
   return (
     <article className={`card simulation-insight-card ${accent ? "accent" : ""}`}>
       <div className="eyebrow">{title}</div>
-      <p>{text}</p>
+      <p className="simulation-insight-text">{text}</p>
     </article>
   );
 }
@@ -212,12 +221,31 @@ function PlanCard({ title, items = [] }) {
         {items.map((item, index) => (
           <div className="simulation-plan-item" key={`${title}-${index}`}>
             <div className="simulation-step-index">{index + 1}</div>
-            <p>{item}</p>
+            <p className="simulation-plan-copy">{item}</p>
           </div>
         ))}
       </div>
     </article>
   );
+}
+
+function defaultScenarioSupport(category) {
+  switch (category) {
+    case "Group Project Conflict":
+      return "Uneven contribution, deadline pressure, and the need for clean accountability.";
+    case "Viva / Interview Pressure":
+      return "Pressure, follow-up questions, and recovering without sounding memorized.";
+    case "Career Confusion":
+      return "Too many options, fear of choosing wrong, and decision paralysis.";
+    case "Procrastination":
+      return "Avoidance loops, guilt at night, and reducing starting friction.";
+    case "Friendship Conflict":
+      return "Delayed replies, emotional ambiguity, and direct but low-pressure clarity.";
+    case "Leadership Situation":
+      return "Taking charge, delegating clearly, and holding emotional control.";
+    default:
+      return "A personalized real-life situation interpreted through your Cognify profile.";
+  }
 }
 
 export default SimulationPage;
