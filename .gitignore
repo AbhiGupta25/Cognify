@@ -17,12 +17,15 @@ target/
 Thumbs.db
 
 # Secrets
-src/main/resources/application.properties
 .env
+.env.local
+application-local.properties
 
 # React
 cognify-frontend/node_modules/
 cognify-frontend/build/
+node_modules/
+build/
 
 # npm logs
 npm-debug.log*
