@@ -25,3 +25,8 @@ export const compareAttempts = async (oldId, newId) => {
   );
   return res.data;
 };
+
+export const analyzeSimulation = async (payload) => {
+  const res = await axios.post("http://localhost:8080/api/simulations/analyze", payload);
+  return res.data;
+};

@@ -5,12 +5,14 @@ import ResultPage from "./pages/ResultPage";
 import ComparePage from "./pages/ComparePage";
 import SignupPage from "./pages/SignupPage";
 import DashboardPage from "./pages/DashboardPage";
+import SimulationPage from "./pages/SimulationPage";
 
 function App() {
   const [view, setView] = useState(() => (getStoredUser() ? "dashboard" : "auth"));
   const [result, setResult] = useState(null);
   const [user, setUser] = useState(() => getStoredUser());
   const [compareSelection, setCompareSelection] = useState({ oldAttemptId: "", newAttemptId: "" });
+  const [simulationContext, setSimulationContext] = useState(null);
 
   const userName = user?.name?.split(" ")[0] || "User";
 
@@ -22,11 +24,13 @@ function App() {
 
   const handleAssessmentComplete = (assessmentResult) => {
     setResult(assessmentResult);
+    setSimulationContext(assessmentResult);
     setView("result");
   };
 
   const handleOpenAttempt = (attemptResult) => {
     setResult(attemptResult);
+    setSimulationContext(attemptResult);
     setView("result");
   };
 
@@ -40,6 +44,7 @@ function App() {
     localStorage.removeItem("cognifyUser");
     setUser(null);
     setResult(null);
+    setSimulationContext(null);
     setCompareSelection({ oldAttemptId: "", newAttemptId: "" });
     setView("auth");
   };
@@ -75,6 +80,13 @@ function App() {
           >
             Compare
           </button>
+          <button
+            className={`nav-btn ${view === "simulation" ? "active" : ""}`}
+            onClick={() => setView("simulation")}
+            disabled={!simulationContext}
+          >
+            Simulation
+          </button>
           <button className="nav-btn ghost" onClick={handleLogout}>
             Log Out
           </button>
@@ -108,6 +120,10 @@ function App() {
             result={result}
             onRestart={() => setView("assessment")}
             onBackToDashboard={() => setView("dashboard")}
+            onOpenSimulation={() => {
+              setSimulationContext(result);
+              setView("simulation");
+            }}
           />
         )}
 
@@ -116,6 +132,18 @@ function App() {
             user={user}
             initialSelection={compareSelection}
             onBack={() => setView("dashboard")}
+          />
+        )}
+
+        {view === "simulation" && simulationContext && (
+          <SimulationPage
+            user={user}
+            result={simulationContext}
+            onBackToResult={() => {
+              setResult(simulationContext);
+              setView("result");
+            }}
+            onBackToDashboard={() => setView("dashboard")}
           />
         )}
       </div>
