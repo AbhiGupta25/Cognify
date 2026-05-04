@@ -26,7 +26,8 @@ body {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 
@@ -287,7 +288,8 @@ select {
 .auth-input,
 .compare-selector-card select,
 .card input,
-.card select {
+.card select,
+.card textarea {
   width: 100%;
   padding: 14px 16px;
   border-radius: 16px;
@@ -299,9 +301,14 @@ select {
 
 .auth-input:focus,
 .compare-selector-card select:focus,
-.card input:focus {
+.card input:focus,
+.card textarea:focus {
   border-color: rgba(120, 216, 198, 0.6);
   box-shadow: 0 0 0 3px rgba(120, 216, 198, 0.12);
+}
+
+textarea {
+  resize: vertical;
 }
 
 .error-banner {
@@ -387,7 +394,9 @@ select {
 
 .report-layout,
 .compare-layout,
-.dashboard-layout {
+.dashboard-layout,
+.simulation-layout,
+.simulation-results {
   display: grid;
   gap: 22px;
 }
@@ -456,11 +465,139 @@ select {
 .compare-result-hero,
 .compare-hero,
 .report-hero,
-.dashboard-hero-card {
+.dashboard-hero-card,
+.simulation-hero,
+.simulation-result-hero {
   display: flex;
   justify-content: space-between;
   gap: 20px;
   align-items: flex-start;
+}
+
+.simulation-context-card {
+  min-width: 320px;
+  padding: 22px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(9, 15, 28, 0.52), rgba(9, 15, 28, 0.18));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.simulation-context-card h3 {
+  margin: 10px 0 6px;
+  font-size: 2rem;
+}
+
+.simulation-builder-card,
+.premium-insight-card,
+.reflection-card {
+  background:
+    radial-gradient(circle at top right, rgba(120, 216, 198, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(16, 24, 43, 0.95), rgba(12, 18, 34, 0.98));
+}
+
+.simulation-category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.simulation-category-card {
+  padding: 18px 16px;
+  min-height: 92px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  color: var(--text);
+}
+
+.simulation-category-card.active {
+  background: linear-gradient(145deg, rgba(120, 216, 198, 0.18), rgba(115, 174, 245, 0.14));
+  border-color: rgba(120, 216, 198, 0.42);
+  box-shadow: 0 0 0 1px rgba(120, 216, 198, 0.18) inset;
+}
+
+.simulation-category-card span {
+  display: block;
+  line-height: 1.45;
+  font-weight: 700;
+}
+
+.simulation-input-block {
+  margin-top: 22px;
+}
+
+.simulation-input-block label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.simulation-textarea {
+  min-height: 150px;
+}
+
+.simulation-helper-text {
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+
+.simulation-insight-grid,
+.simulation-plan-grid {
+  align-items: stretch;
+}
+
+.simulation-insight-card,
+.simulation-plan-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.simulation-insight-card::before,
+.simulation-plan-card::before,
+.premium-insight-card::before,
+.reflection-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 38%);
+}
+
+.simulation-insight-card.accent {
+  background:
+    radial-gradient(circle at top right, rgba(115, 174, 245, 0.14), transparent 30%),
+    linear-gradient(180deg, rgba(17, 31, 55, 0.98), rgba(13, 20, 39, 0.98));
+}
+
+.simulation-plan-list {
+  display: grid;
+  gap: 14px;
+}
+
+.simulation-plan-item {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.simulation-plan-item p {
+  margin: 0;
+}
+
+.simulation-step-index {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: rgba(120, 216, 198, 0.14);
+  border: 1px solid rgba(120, 216, 198, 0.22);
+  color: var(--accent);
+  font-weight: 800;
 }
 
 .stability-ring {
@@ -569,15 +706,26 @@ select {
   .compare-hero,
   .report-hero,
   .dashboard-hero-card,
+  .simulation-hero,
+  .simulation-result-hero,
   .page-header,
   .top-nav {
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .simulation-category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 720px) {
   .scale-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .simulation-category-grid,
+  .simulation-plan-item {
     grid-template-columns: 1fr;
   }
 

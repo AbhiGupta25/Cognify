@@ -1,6 +1,6 @@
 import React from "react";
 
-function ResultPage({ result, onRestart, onBackToDashboard }) {
+function ResultPage({ result, onRestart, onBackToDashboard, onOpenSimulation }) {
   const sections = [
     { title: "Core Profile", text: result.coreProfile },
     { title: "Decision Pattern", text: result.decisionPattern },
@@ -80,6 +80,9 @@ function ResultPage({ result, onRestart, onBackToDashboard }) {
       <div className="actions-row report-actions">
         <button className="secondary-btn" onClick={onBackToDashboard}>
           Back to Dashboard
+        </button>
+        <button className="secondary-btn" onClick={onOpenSimulation}>
+          Simulate a Real-Life Situation
         </button>
         <button className="primary-btn" onClick={onRestart}>
           Retake Assessment
