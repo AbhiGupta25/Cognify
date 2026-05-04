@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { login, signup } from "../api/userApi";
+import { login, signup, startDemo } from "../api/userApi";
 
-function SignupPage({ onAuthSuccess }) {
+function SignupPage({ onAuthSuccess, onDemoStart }) {
   const [mode, setMode] = useState("signup");
   const [form, setForm] = useState({
     name: "",
@@ -10,6 +10,7 @@ function SignupPage({ onAuthSuccess }) {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -39,6 +40,25 @@ function SignupPage({ onAuthSuccess }) {
       setError(message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDemoStart = async () => {
+    setError("");
+
+    try {
+      setDemoLoading(true);
+      const demoData = await startDemo();
+      onDemoStart(demoData);
+    } catch (err) {
+      const message =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
+        "Demo mode could not be started.";
+      setError(message);
+    } finally {
+      setDemoLoading(false);
     }
   };
 
@@ -124,6 +144,18 @@ function SignupPage({ onAuthSuccess }) {
             <button className="primary-btn auth-btn" type="submit" disabled={loading}>
               {loading ? "Please wait..." : mode === "signup" ? "Create Account" : "Log In"}
             </button>
+
+            <div className="demo-divider">
+              <span>or</span>
+            </div>
+
+            <button className="secondary-btn demo-btn" type="button" onClick={handleDemoStart} disabled={demoLoading}>
+              {demoLoading ? "Loading Demo..." : "Try Demo Profile"}
+            </button>
+
+            <p className="demo-microcopy">
+              Skip the assessment and explore Cognify&apos;s behavioral simulation engine.
+            </p>
 
             {error && <div className="error-banner auth-error">{error}</div>}
           </form>

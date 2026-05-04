@@ -22,6 +22,14 @@ function App() {
     setView("dashboard");
   };
 
+  const handleDemoStart = ({ user: demoUser, result: demoResult }) => {
+    persistUser(demoUser);
+    setUser(demoUser);
+    setResult(demoResult);
+    setSimulationContext(demoResult);
+    setView("result");
+  };
+
   const handleAssessmentComplete = (assessmentResult) => {
     setResult(assessmentResult);
     setSimulationContext(assessmentResult);
@@ -50,7 +58,7 @@ function App() {
   };
 
   if (!user) {
-    return <SignupPage onAuthSuccess={handleAuthSuccess} />;
+    return <SignupPage onAuthSuccess={handleAuthSuccess} onDemoStart={handleDemoStart} />;
   }
 
   return (
@@ -117,6 +125,7 @@ function App() {
 
         {view === "result" && result && (
           <ResultPage
+            user={user}
             result={result}
             onRestart={() => setView("assessment")}
             onBackToDashboard={() => setView("dashboard")}

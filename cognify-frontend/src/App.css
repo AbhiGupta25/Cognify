@@ -285,6 +285,40 @@ textarea {
   margin-top: 6px;
 }
 
+.demo-divider {
+  position: relative;
+  margin: 8px 0 2px;
+  text-align: center;
+}
+
+.demo-divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.demo-divider span {
+  position: relative;
+  padding: 0 12px;
+  background: linear-gradient(180deg, rgba(17, 26, 47, 0.98), rgba(14, 22, 40, 0.96));
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.demo-btn {
+  margin-top: 8px;
+}
+
+.demo-microcopy {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
 .auth-input,
 .compare-selector-card select,
 .card input,
@@ -423,6 +457,19 @@ textarea {
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.demo-profile-badge {
+  display: inline-flex;
+  align-items: center;
+  margin: 10px 0 2px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.84rem;
+  font-weight: 700;
 }
 
 .metric-pill span,
