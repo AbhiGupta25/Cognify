@@ -150,11 +150,11 @@ function SignupPage({ onAuthSuccess, onDemoStart }) {
             </div>
 
             <button className="secondary-btn demo-btn" type="button" onClick={handleDemoStart} disabled={demoLoading}>
-              {demoLoading ? "Loading Demo..." : "Try Demo Profile"}
+              {demoLoading ? "Loading Demo..." : "Explore Prebuilt Demo Profile"}
             </button>
 
             <p className="demo-microcopy">
-              Skip the assessment and explore Cognify&apos;s behavioral simulation engine.
+              Loads a sample Cognify assessment so you can test the behavioral simulation engine instantly.
             </p>
 
             {error && <div className="error-banner auth-error">{error}</div>}

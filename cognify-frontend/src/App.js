@@ -15,6 +15,7 @@ function App() {
   const [simulationContext, setSimulationContext] = useState(null);
 
   const userName = user?.name?.split(" ")[0] || "User";
+  const isDemoUser = user?.email === "judge.demo@cognify.app";
 
   const handleAuthSuccess = (nextUser) => {
     persistUser(nextUser);
@@ -107,6 +108,9 @@ function App() {
             <div className="eyebrow">Signed In</div>
             <h1>Welcome back, {userName}.</h1>
             <p>Your assessment history, live report, and retest comparisons all stay connected to this account.</p>
+            {isDemoUser && (
+              <p className="demo-banner-note">This is a sample profile created for judges and demos.</p>
+            )}
           </div>
         </div>
 

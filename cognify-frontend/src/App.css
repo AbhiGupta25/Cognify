@@ -319,6 +319,12 @@ textarea {
   line-height: 1.6;
 }
 
+.demo-banner-note {
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.95rem;
+}
+
 .auth-input,
 .compare-selector-card select,
 .card input,
