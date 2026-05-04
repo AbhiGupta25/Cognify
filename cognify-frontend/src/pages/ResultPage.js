@@ -18,7 +18,7 @@ function ResultPage({ user, result, onRestart, onBackToDashboard, onOpenSimulati
       <section className="hero-card report-hero">
         <div>
           <div className="eyebrow">Behavioral Intelligence Report</div>
-          {isDemoProfile && <div className="demo-profile-badge">Demo Profile</div>}
+          {isDemoProfile && <div className="demo-profile-badge">Prebuilt Demo Profile</div>}
           <h2>{result.mbtiType}</h2>
           <p className="hero-subtitle">{result.expandedMbtiType}</p>
         </div>
