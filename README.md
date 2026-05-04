@@ -76,7 +76,30 @@ It takes user responses, maps them into behavioral dimensions, detects inconsist
 ## Run Locally
 
 ### Backend
-Configure your database credentials in `application.properties` and run:
+Set your database environment variables and run:
 
 ```bash
 ./mvnw spring-boot:run
+```
+
+PowerShell example:
+
+```powershell
+$env:DB_URL="jdbc:mysql://localhost:3306/cognify?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+$env:DB_USERNAME="root"
+$env:DB_PASSWORD="your_mysql_password_here"
+.\mvnw.cmd spring-boot:run
+```
+
+### Frontend
+
+```bash
+cd cognify-frontend
+npm start
+```
+
+## Local Setup Notes
+
+- Required env vars: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`
+- Demo mode is available from the auth screen through the prebuilt judge demo profile
+- Do not commit secrets, local passwords, or personal environment files such as `.env` or `application-local.properties`
